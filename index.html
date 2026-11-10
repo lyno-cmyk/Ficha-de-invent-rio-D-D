@@ -56,16 +56,17 @@ button{font:inherit;font-size:12px;border:1px solid var(--red);background:var(--
 .dd{display:block;margin:2px 0 0 28px;font-size:11px}.dd textarea{font:inherit;font-size:12px;width:100%;min-height:42px;resize:vertical;border:1px solid var(--ln);background:#fbf6e6;color:var(--ink);padding:3px 5px}
 #ts{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--red);color:var(--pg);padding:8px 16px;border-radius:6px;z-index:120;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw}#ts.on{opacity:1}
 @media(max-width:700px){.top{grid-template-columns:1fr}}
+.two{display:grid;grid-template-columns:1fr 72px;gap:6px}.it.mg{outline:2px dashed var(--red);outline-offset:-2px;background:#e6c96a!important}
 </style></head><body>
 <main class="pg">
 <h1>Ficha de inventário</h1>
 <header class="top"><div class="f">
 <label>Nome<input data-i="nome"></label><label>Classe<input data-i="classe"></label></div>
 <div class="ca"><small>CA ATUAL</small><b id="ca">10</b><i id="cad"></i></div>
-<div class="f"><label>Subclasse<input data-i="sub"></label><label>Raça<input data-i="raca"></label><label>Mod. de Destreza<input type="number" data-i="des" value="0"></label><label>Força<input type="number" min="1" max="30" data-i="forca"></label><label>Categoria de tamanho<select data-i="tamanho"><option>Miúdo</option><option>Pequeno</option><option selected>Médio</option><option>Grande</option><option>Enorme</option><option>Imenso</option></select></label></div>
+<div class="f"><label>Subclasse<input data-i="sub"></label><label>Raça<input data-i="raca"></label><label>Atributo da CA (modificador)<span class="two"><select data-i="atr"><option value="des">Destreza</option><option value="for">Força</option><option value="con">Constituição</option><option value="int">Inteligência</option><option value="sab">Sabedoria</option><option value="car">Carisma</option><option value="out">Outro</option></select><input type="number" id="mod" value="0" aria-label="Modificador"></span></label><label>Força<input type="number" min="1" max="30" data-i="forca"></label><label>Categoria de tamanho<select data-i="tamanho"><option>Miúdo</option><option>Pequeno</option><option selected>Médio</option><option>Grande</option><option>Enorme</option><option>Imenso</option></select></label></div>
 </header>
 <section><h2>Equipado</h2><div class="tbl"><div class="lst eq" data-l="eq" data-h="Arraste itens do inventário para cá (a primeira armadura define a CA)"></div></div></section>
-<section class="weight-panel" id="weightPanel"><div class="weight-head"><b>Peso carregado</b><span class="weight-status" id="weightStatus">Informe sua Força para calcular a capacidade.</span></div><div class="weight-values"><span>Carregado: <strong id="weightTotal">0 kg</strong></span><span>Capacidade máxima: <strong id="weightMax">—</strong></span><span>Disponível: <strong id="weightFree">—</strong></span></div><div class="weight-track"><div class="weight-fill" id="weightFill"></div></div><div class="weight-note" id="weightNote">O cálculo considera inventário e equipamento, multiplicados pelas respectivas quantidades.</div></section>
+<section class="weight-panel" id="weightPanel"><div class="weight-head"><b>Peso carregado</b><span class="weight-status" id="weightStatus">Informe sua Força para calcular a capacidade.</span></div><div class="weight-values"><span>Carregado: <strong id="weightTotal">0 kg</strong></span><span>Capacidade máxima: <strong id="weightMax">—</strong></span><span>Disponível: <strong id="weightFree">—</strong></span></div><div class="weight-track"><div class="weight-fill" id="weightFill"></div></div><div class="weight-note" id="weightNote">O cálculo considera inventário e equipamento, multiplicados pelas respectivas quantidades; itens equipados contam metade do peso.</div></section>
 <section><h2>Inventário <button id="nw">+ Novo item</button></h2><div class="tbl"><div class="lst" data-l="inv" data-h="Abra Armas, Armaduras ou Itens gerais no menu à direita e arraste itens para cá"></div></div></section>
 </main>
 <aside id="sd"><button data-c="w"><span>⚔️</span>Armas</button><button data-c="a"><span>🛡️</span>Armaduras</button><button data-c="g"><span>🎒</span>Itens gerais</button><button data-c="m"><span>🏹</span>Munições</button><button data-c="fa"><span>🔮</span>Focos arcanos</button><button data-c="fd"><span>🌿</span>Focos druídicos</button></aside>
@@ -217,6 +218,7 @@ const KEY='ficha-inventario-v1',$=s=>document.querySelector(s),uid=()=>Math.rand
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let S={nome:'',classe:'',sub:'',raca:'',des:0,forca:10,tamanho:'Médio',inv:[],eq:[]};
 try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+S.mods=Object.assign({des:+S.des||0,for:0,con:0,int:0,sab:0,car:0,out:0},S.mods);S.atr=S.atr||'des';
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const find=id=>{for(const l of['inv','eq']){const i=S[l].findIndex(x=>x.id==id);if(i>=0)return{l,i,it:S[l][i]}}};
 function mk(c){const b={id:uid(),k:c.c,key:c.c+c.n,n:c.n,d:c.d||'',p:c.p,v:c.v,q:1};
@@ -226,11 +228,11 @@ function mk(c){const b={id:uid(),k:c.c,key:c.c+c.n,n:c.n,d:c.d||'',p:c.p,v:c.v,q
 const inp=(f,v,x='')=>`<input data-f="${f}" value="${esc(v)}" ${x}>`;
 function row(i){const x=i.k=='w'?`<div class="sub"><label>Dano de ataque${inp('dm',i.dm)}</label><label>Ataque${inp('at',i.at,'placeholder="+0"')}</label><label>Maestria${inp('ma',i.ma)}</label><label class="w">Propriedades${inp('pr',i.pr)}</label></div>`
  :i.k=='a'?`<div class="sub"><label>CA${inp('ca',i.ca)}</label><label>Limite do bônus de Des${inp('md',i.md,'placeholder="sem limite"')}</label><label class="ck"><input type="checkbox" data-f="fu" ${i.fu?'checked':''}>Desvantagem em Furtividade</label></div>`:i.k=='m'?`<div class="sub"><label class="w">Armazenamento necessário (precisa estar equipado)${inp('ar',i.ar)}</label></div>`:'';
- return `<div class="it ${i.k}${i.q==0?' z':''}${i.o?' o':''}" data-id="${i.id}"><div class="main"><b class="grip" title="Arraste">⠿</b><input type="number" min="0" class="q" data-f="q" value="${i.q}" placeholder="Qtd">${inp('n',i.n,'placeholder="Nome"')}<span class="dc" data-a="t" title="Expandir">${esc(i.d)}</span>${inp('p',i.p,'placeholder="Peso"')}${inp('v',i.v,'placeholder="Valor"')}<span class="cn"><button data-a="-" title="Diminuir">−</button><button data-a="+" title="Aumentar">+</button></span><button class="tg" data-a="t" title="Expandir ou recolher">▾</button><button class="x" data-a="x" title="Excluir">✕</button></div><div class="ex"><label class="dd">Descrição<textarea data-f="d" placeholder="Descrição completa">${esc(i.d)}</textarea></label>${x}</div></div>`}
+ return `<div class="it ${i.k}${i.q==0?' z':''}${i.o?' o':''}" data-id="${i.id}" data-key="${esc(i.key)}"><div class="main"><b class="grip" title="Arraste">⠿</b><input type="number" min="0" class="q" data-f="q" value="${i.q}" placeholder="Qtd">${inp('n',i.n,'placeholder="Nome"')}<span class="dc" data-a="t" title="Expandir">${esc(i.d)}</span>${inp('p',i.p,'placeholder="Peso"')}${inp('v',i.v,'placeholder="Valor"')}<span class="cn"><button data-a="-" title="Diminuir">−</button><button data-a="+" title="Aumentar">+</button></span><button class="tg" data-a="t" title="Expandir ou recolher">▾</button><button class="x" data-a="x" title="Excluir">✕</button></div><div class="ex"><label class="dd">Descrição<textarea data-f="d" placeholder="Descrição completa">${esc(i.d)}</textarea></label>${x}</div></div>`}
 function chk(){const m=[];S.eq=S.eq.filter(i=>{if(need(i)){S.inv.push(i);m.push(i.n);return false}return true});if(m.length)toast('Sem o armazenamento equipado: '+m.join(', ')+' voltou ao inventário')}
 function render(){chk();document.querySelectorAll('.lst').forEach(l=>l.innerHTML=S[l.dataset.l].map(row).join(''));calc()}
-function calc(){const d=+S.des||0,a=S.eq.find(i=>i.k=='a'&&!/^\+/.test(i.ca)),s=S.eq.find(i=>i.k=='a'&&/^\+/.test(i.ca));let base=10,dx=d,t='10 + Des';
- if(a){base=parseInt(a.ca)||10;const m=a.md===''||a.md==null?NaN:+a.md;if(!isNaN(m))dx=m===0?0:Math.min(d,m);t=a.n+' '+base+' + Des '+dx}else t='Sem armadura: 10 + Des '+d;
+function calc(){const d=+S.mods[S.atr]||0,ab={des:'Des',for:'For',con:'Con',int:'Int',sab:'Sab',car:'Car',out:'Mod'}[S.atr]||'Mod',a=S.eq.find(i=>i.k=='a'&&!/^\+/.test(i.ca)),s=S.eq.find(i=>i.k=='a'&&/^\+/.test(i.ca));let base=10,dx=d,t='10 + Des';
+ if(a){base=parseInt(a.ca)||10;const m=a.md===''||a.md==null?NaN:+a.md;if(!isNaN(m))dx=m===0?0:Math.min(d,m);t=a.n+' '+base+' + '+ab+' '+dx}else t='Sem armadura: 10 + '+ab+' '+d;
  const b=s?parseInt(s.ca)||0:0;if(s)t+=' + '+s.n+' '+b;$('#ca').textContent=base+dx+b;$('#cad').textContent=t;calcWeight()}
 function weightKg(raw){
  const v=String(raw??'').trim().toLowerCase();
@@ -242,18 +244,20 @@ function weightKg(raw){
 }
 function fmtKg(n){return n.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:2})+' kg'}
 function calcWeight(){
- const total=[...S.inv,...S.eq].reduce((sum,i)=>sum+weightKg(i.p)*Math.max(0,+i.q||0),0);
+ const wt=(a,m)=>a.reduce((sum,i)=>sum+weightKg(i.p)*Math.max(0,+i.q||0),0)*m,total=wt(S.inv,1)+wt(S.eq,.5);
  const str=Math.max(0,+S.forca||0),sizes={'Miúdo':0.5,'Pequeno':1,'Médio':1,'Grande':2,'Enorme':4,'Imenso':8};
  const mult=sizes[S.tamanho]||1,max=str>0?str*15*0.45359237*mult:0;
  const panel=$('#weightPanel'),fill=$('#weightFill'),status=$('#weightStatus');
  $('#weightTotal').textContent=fmtKg(total);$('#weightMax').textContent=max?fmtKg(max):'—';$('#weightFree').textContent=max?fmtKg(max-total):'—';
  fill.style.width=Math.min(100,max?total/max*100:0)+'%';panel.classList.toggle('over',!!max&&total>max);
- if(!str){status.textContent='Informe sua Força para calcular a capacidade.';$('#weightNote').textContent='O peso carregado soma inventário e equipamento. Pesos em gramas e quilogramas são convertidos automaticamente.'}
+ if(!str){status.textContent='Informe sua Força para calcular a capacidade.';$('#weightNote').textContent='O peso carregado soma inventário e equipamento (itens equipados contam metade do peso). Pesos em gramas e quilogramas são convertidos automaticamente.'}
  else if(total>max){status.textContent='Capacidade excedida';$('#weightNote').textContent='Você está carregando '+fmtKg(total-max)+' acima da sua capacidade de carga.'}
- else{status.textContent='Dentro da capacidade';$('#weightNote').textContent='Força '+str+' · '+S.tamanho+' · multiplicador de tamanho ×'+mult+'. O cálculo soma inventário e equipamento.'}
+ else{status.textContent='Dentro da capacidade';$('#weightNote').textContent='Força '+str+' · '+S.tamanho+' · multiplicador de tamanho ×'+mult+'. Itens equipados contam metade do peso.'}
 }
 
 document.querySelectorAll('[data-i]').forEach(e=>{e.value=S[e.dataset.i]??e.value;e.oninput=()=>{S[e.dataset.i]=e.type=='number'?+e.value||0:e.value;calc();save()};e.onchange=()=>{S[e.dataset.i]=e.type=='number'?+e.value||0:e.value;calc();save()}});
+const mod=$('#mod'),atr=$('[data-i="atr"]'),sync=()=>{mod.value=S.mods[S.atr]??0};sync();
+atr.addEventListener('change',()=>{S.atr=atr.value;sync();calc();save()});mod.oninput=()=>{S.mods[S.atr]=+mod.value||0;calc();save()};
 document.addEventListener('input',e=>{const f=e.target.dataset.f,r=e.target.closest('.it');if(!f||!r)return;const o=find(r.dataset.id);if(!o)return;
  o.it[f]=e.target.type=='checkbox'?e.target.checked:f=='q'?Math.max(0,+e.target.value||0):e.target.value;if(f=='q')r.classList.toggle('z',o.it.q==0);if(f=='d')r.querySelector('.dc').textContent=e.target.value;calc();save()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const r=b.closest('.it'),o=find(r.dataset.id),a=b.dataset.a;
@@ -269,19 +273,21 @@ function open(c){if(cc==c){cc=null}else{cc=c;cl=CAT[c];selc.clear();$('#pt').tex
  $('#pn').classList.toggle('on',!!cc);document.body.classList.toggle('po',!!cc);document.querySelectorAll('#sd button').forEach(b=>b.classList.toggle('on',b.dataset.c==cc));if(cc)list()}
 document.querySelectorAll('#sd button').forEach(b=>b.onclick=()=>open(b.dataset.c));$('#px').onclick=()=>open(cc);$('#sq').oninput=list;
 $('#cl').addEventListener('click',e=>{const r=e.target.closest('.cr');if(!r||e.target.closest('.grip'))return;const k=+r.dataset.k;selc.has(k)?selc.delete(k):selc.add(k);r.classList.toggle('sel')});
-function put(ks,l,at){const arr=S[l];ks.forEach(k=>{const n=mk(cl[k]),ex=arr.find(x=>x.key==n.key);if(l=='eq'&&need(n))return toast('Equipe antes: '+n.ar);if(ex)ex.q+=n.q;else arr.splice(at++,0,n)});selc.clear();list();render();save()}
-$('#ad').onclick=()=>{if(selc.size)put([...selc],'inv',S.inv.length)};
+function put(ks,l,at,mg,auto){const arr=S[l];ks.forEach(k=>{const n=mk(cl[k]);if(l=='eq'&&need(n))return toast('Equipe antes: '+n.ar);const ex=mg?arr.find(x=>x.id==mg):auto?arr.find(x=>x.key==n.key):null;if(ex)ex.q+=n.q;else arr.splice(at++,0,n)});selc.clear();list();render();save()}
+$('#ad').onclick=()=>{if(selc.size)put([...selc],'inv',S.inv.length,null,true)};
 /* arrastar e soltar */
 let dr=null;
 document.addEventListener('pointerdown',e=>{const g=e.target.closest('.grip');if(!g)return;e.preventDefault();const it=g.closest('.it'),cr=g.closest('.cr');let src,lb;
  if(it){src={t:'i',id:it.dataset.id};lb=find(src.id).it.n||'Item';it.classList.add('dg')}else{const k=+cr.dataset.k,ks=selc.has(k)?[...selc]:[k];src={t:'c',ks};lb=ks.length>1?ks.length+' itens':cl[k].n}
  const gh=document.createElement('div');gh.className='ghost';gh.textContent=lb;document.body.appendChild(gh);const ph=document.createElement('div');ph.className='ph';
  dr={src,gh,ph,g,l:null,idx:0};mv(e);g.setPointerCapture(e.pointerId);g.addEventListener('pointermove',mv);g.addEventListener('pointerup',up);g.addEventListener('pointercancel',up)});
-function mv(e){const d=dr;d.gh.style.left=e.clientX+12+'px';d.gh.style.top=e.clientY+12+'px';const el=document.elementFromPoint(e.clientX,e.clientY),lst=el&&el.closest('.lst');d.ph.remove();d.l=null;if(!lst)return;
- d.l=lst.dataset.l;const rows=[...lst.querySelectorAll('.it:not(.dg)')];let idx=rows.length;for(let i=0;i<rows.length;i++){const b=rows[i].getBoundingClientRect();if(e.clientY<b.top+b.height/2){idx=i;break}}
+function mv(e){const d=dr;d.gh.style.left=e.clientX+12+'px';d.gh.style.top=e.clientY+12+'px';const el=document.elementFromPoint(e.clientX,e.clientY),lst=el&&el.closest('.lst');d.ph.remove();document.querySelectorAll('.it.mg').forEach(x=>x.classList.remove('mg'));d.l=null;d.mg=null;if(!lst)return;
+ d.l=lst.dataset.l;const rows=[...lst.querySelectorAll('.it:not(.dg)')];let idx=rows.length;const r=el.closest('.it'),c=d.src.t=='c'&&d.src.ks.length==1?cl[d.src.ks[0]]:null;
+ if(r&&c&&r.dataset.key==c.c+c.n){const m=r.querySelector('.main').getBoundingClientRect();if(e.clientY<m.top+m.height*.65){d.mg=r.dataset.id;r.classList.add('mg');return}idx=rows.indexOf(r)+1}
+ else for(let i=0;i<rows.length;i++){const b=rows[i].getBoundingClientRect();if(e.clientY<b.top+b.height/2){idx=i;break}}
  d.idx=idx;lst.insertBefore(d.ph,rows[idx]||null)}
 function up(){const d=dr;dr=null;d.g.removeEventListener('pointermove',mv);d.g.removeEventListener('pointerup',up);d.g.removeEventListener('pointercancel',up);d.gh.remove();d.ph.remove();
- if(d.l&&d.src.t=='c')return put(d.src.ks,d.l,d.idx);
+ if(d.l&&d.src.t=='c')return put(d.src.ks,d.l,d.idx,d.mg);
  if(d.l){const f=find(d.src.id);if(f){if(d.l=='eq'&&need(f.it))toast('Equipe antes: '+f.it.ar);else{S[f.l].splice(f.i,1);S[d.l].splice(d.idx,0,f.it)}}}render();save()}
 render();
 </script></body></html>

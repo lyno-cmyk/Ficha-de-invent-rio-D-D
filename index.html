@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ficha de inventário</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--red:#58180d;--ink:#2b2118;--bg:#e8dcc0;--pg:#f4ecd6;--z:#ebe0c0;--ln:#c9b787;color-scheme:light}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 "Bookman Old Style","Palatino Linotype",Georgia,serif}
+.pg{max-width:1040px;margin:14px auto 40px;padding:22px 26px;background:var(--pg);border:1px solid var(--ln);box-shadow:0 0 0 5px var(--pg),0 0 0 6px var(--ln);transition:margin .2s}
+@media(min-width:1100px){body.po .pg{margin-left:400px}}
+@media(max-width:1210px){.pg{margin-right:84px}}
+@media(max-width:700px){.pg{margin:8px 64px 30px 8px;padding:12px}}
+h1{margin:0 0 12px;font-variant:small-caps;font-size:32px;color:var(--red);border-bottom:3px solid var(--red)}
+h2{margin:18px 0 6px;font-variant:small-caps;font-size:22px;color:var(--red);border-bottom:1px solid var(--red);display:flex;align-items:center;gap:10px}
+h2 button{margin-left:auto}
+.top{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:center}.f{display:grid;gap:8px}
+label{font-size:11px;color:#4a3b2a;display:block}
+input{font:inherit;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--ln);padding:1px 4px;width:100%;min-width:0}
+input:focus{outline:0;background:#fbf6e6;border-bottom-color:var(--red)}
+.f input{font-size:15px;background:#fbf6e6;padding:4px 6px}
+.ca{width:110px;text-align:center;border:3px solid var(--red);border-radius:6px 6px 50% 50%;padding:6px 4px 14px;background:#fbf6e6}.ca small{display:block;font-size:11px;color:var(--red);font-weight:bold}.ca b{font-size:38px;line-height:1;color:var(--red)}.ca i{display:block;font-size:9px;color:#4a3b2a;margin-top:4px}
+button{font:inherit;font-size:12px;border:1px solid var(--red);background:var(--pg);color:var(--red);cursor:pointer;padding:2px 9px;border-radius:3px}button:hover{background:var(--red);color:var(--pg)}
+.tbl{overflow-x:auto}.tbl>*{min-width:760px}
+.main{display:grid;grid-template-columns:24px 54px 1.1fr 2fr 80px 84px 56px 22px 22px;gap:4px;align-items:center}
+.hd{font-size:11px;font-weight:bold;color:var(--red);padding:4px 8px;border-bottom:2px solid var(--red)}
+.it{padding:2px 8px;border-left:4px solid #8a7a5a}.it:nth-child(even){background:var(--z)}.it.w{border-left-color:#8b1e1e}.it.a{border-left-color:#1f4e79}.it.z{opacity:.5}.it.dg{opacity:.3}
+.q{text-align:center}.cn{display:flex;gap:3px}.cn button{width:24px;padding:0;font-size:14px;line-height:1.2}.x{padding:0;width:24px;border-color:transparent;color:#8a6f4a}
+.grip{cursor:grab;touch-action:none;user-select:none;color:#8a6f4a;font-size:17px;text-align:center}
+.sub{display:flex;gap:10px;flex-wrap:wrap;margin:3px 0 0 30px;font-size:11px}.sub label{width:110px}.sub label.w{flex:1;min-width:180px}.sub .ck{display:flex;align-items:center;gap:5px;width:auto;align-self:flex-end}.sub .ck input{width:auto}
+.lst{min-height:46px}.lst:not(:has(.it))::after{content:attr(data-h);display:block;padding:12px;font-style:italic;color:#8a6f4a;text-align:center;border:2px dashed var(--ln);margin-top:6px}
+.eq{background:#fbf6e6;border:1px solid var(--ln)}.eq:not(:has(.it))::after{border:0}
+.ph{height:4px;background:var(--red);margin:1px 0}.ghost{position:fixed;z-index:90;pointer-events:none;background:var(--red);color:var(--pg);padding:4px 12px;border-radius:14px;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+#sd{position:fixed;right:0;top:50%;transform:translateY(-50%);max-height:100vh;overflow-y:auto;z-index:40;display:flex;flex-direction:column;gap:6px;padding:8px 6px;background:var(--pg);border:2px solid var(--red);border-right:0;border-radius:10px 0 0 10px}
+#sd button{width:64px;padding:6px 2px;font-size:11px;line-height:1.2}#sd button span{display:block;font-size:22px}#sd button.on{background:var(--red);color:var(--pg)}
+#pn{position:fixed;left:0;top:0;bottom:0;width:min(390px,88vw);z-index:35;background:var(--pg);border-right:2px solid var(--red);transform:translateX(-102%);transition:transform .2s;display:flex;flex-direction:column;padding:10px;padding-top:calc(10px + env(safe-area-inset-top,0px))}
+#pn.on{transform:none}#pn h3{margin:0 0 6px;color:var(--red);font-variant:small-caps;font-size:20px;display:flex;justify-content:space-between}
+#pn .bar{display:flex;gap:6px;margin-bottom:6px}#pn .bar input{border:1px solid var(--ln);background:#fbf6e6}
+#cl{overflow:auto;flex:1}.cr{display:flex;gap:6px;align-items:center;padding:4px 6px;cursor:pointer;border-bottom:1px solid #ddd0aa}.cr:nth-child(even){background:var(--z)}.cr.sel{background:#e6c96a!important;outline:2px solid var(--red);outline-offset:-2px}
+.cr b.n{flex:1}.cr .m{font-size:11px;color:#4a3b2a;text-align:right}.gh{padding:4px 6px;font-size:11px;font-style:italic;color:var(--red);background:#e2d4ac;position:sticky;top:0}
+.main{font-size:13px;line-height:1.2}.main input{font-size:13px;padding:0 4px}.it ::placeholder{font-size:9px;opacity:.65}
+.it.m{border-left-color:#4a6b3a}.it:not(.o) .ex{display:none}.ex{padding:1px 0 3px}
+.dc{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px;color:#4a3b2a;cursor:pointer;min-width:0}.dc:empty::before{content:"Descrição";font-size:9px;opacity:.65}
+.tg{padding:0;width:22px;border-color:transparent;color:#8a6f4a;transition:transform .15s}.it.o .tg{transform:rotate(180deg)}
+.dd{display:block;margin:2px 0 0 28px;font-size:11px}.dd textarea{font:inherit;font-size:12px;width:100%;min-height:42px;resize:vertical;border:1px solid var(--ln);background:#fbf6e6;color:var(--ink);padding:3px 5px}
+#ts{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--red);color:var(--pg);padding:8px 16px;border-radius:6px;z-index:120;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw}#ts.on{opacity:1}
+@media(max-width:700px){.top{grid-template-columns:1fr}}
+</style></head><body>
+<main class="pg">
+<h1>Ficha de inventário</h1>
+<header class="top"><div class="f">
+<label>Nome<input data-i="nome"></label><label>Classe<input data-i="classe"></label></div>
+<div class="ca"><small>CA ATUAL</small><b id="ca">10</b><i id="cad"></i></div>
+<div class="f"><label>Subclasse<input data-i="sub"></label><label>Raça<input data-i="raca"></label><label>Mod. de Destreza<input type="number" data-i="des" value="0"></label></div>
+</header>
+<section><h2>Equipado</h2><div class="tbl"><div class="lst eq" data-l="eq" data-h="Arraste itens do inventário para cá (a primeira armadura define a CA)"></div></div></section>
+<section><h2>Inventário <button id="nw">+ Novo item</button></h2><div class="tbl"><div class="lst" data-l="inv" data-h="Abra Armas, Armaduras ou Itens gerais no menu à direita e arraste itens para cá"></div></div></section>
+</main>
+<aside id="sd"><button data-c="w"><span>⚔️</span>Armas</button><button data-c="a"><span>🛡️</span>Armaduras</button><button data-c="g"><span>🎒</span>Itens gerais</button><button data-c="m"><span>🏹</span>Munições</button><button data-c="fa"><span>🔮</span>Focos arcanos</button><button data-c="fd"><span>🌿</span>Focos druídicos</button></aside>
+<aside id="pn"><h3><span id="pt"></span><button id="px">✕</button></h3><div class="bar"><input id="sq" placeholder="Buscar…"><button id="ad">Adicionar selecionados</button></div><div id="cl"></div></aside>
+<div id="ts"></div>
+<script>
+const WD={SC:"Adaga|1d4 Perfurante|Acuidade, Arremesso (6/18), Leve|Ágil|0,5 kg|2 PO;Azagaia|1d6 Perfurante|Arremesso (9/36)|Lentidão|1 kg|5 PP;Cajado|1d6 Contundente|Versátil (1d8)|Derrubar|2 kg|2 PP;Clava|1d4 Contundente|Leve|Lentidão|1 kg|1 PP;Clava Grande|1d8 Contundente|Duas Mãos|Empurrar|5 kg|2 PP;Foice|1d4 Cortante|Leve|Ágil|1 kg|1 PO;Lança|1d6 Perfurante|Arremesso (6/18), Versátil (1d8)|Drenar|1,5 kg|1 PO;Maça|1d6 Contundente|—|Drenar|2 kg|5 PO;Machadinha|1d6 Cortante|Arremesso (6/18), Leve|Afligir|1 kg|5 PO;Martelo Leve|1d4 Contundente|Arremesso (6/18), Leve|Ágil|1 kg|2 PO",
+SD:"Arco Curto|1d6 Perfurante|Duas Mãos, Munição (24/96)|Afligir|1 kg|25 PO;Besta Leve|1d8 Perfurante|Duas Mãos, Munição (24/96), Recarga|Lentidão|2,5 kg|25 PO;Dardo|1d4 Perfurante|Acuidade, Arremesso (6/18)|Afligir|150 g|5 PC;Funda|1d4 Contundente|Munição (9/36)|Lentidão|—|1 PP",
+MC:"Alabarda|1d10 Cortante|Duas Mãos, Extensão, Pesada|Trespassar|3 kg|20 PO;Chicote|1d4 Cortante|Acuidade, Extensão|Lentidão|1,5 kg|2 PO;Cimitarra|1d6 Cortante|Acuidade, Leve|Ágil|1,5 kg|25 PO;Espada Curta|1d6 Perfurante|Acuidade, Leve|Afligir|1 kg|10 PO;Espada Grande|2d6 Cortante|Duas Mãos, Pesada|Garantido|3 kg|50 PO;Espada Longa|1d8 Cortante|Versátil (1d10)|Drenar|1,5 kg|15 PO;Glaive|1d10 Cortante|Duas Mãos, Extensão, Pesada|Garantido|3 kg|20 PO;Lança de Montaria|1d10 Perfurante|Duas Mãos, Extensão, Pesada|Derrubar|3 kg|10 PO;Lança Longa|1d10 Perfurante|Duas Mãos, Extensão, Pesada|Empurrar|9 kg|5 PO;Maça Estrela|1d8 Perfurante|—|Drenar|2 kg|15 PO;Machado de Batalha|1d8 Cortante|Versátil (1d10)|Derrubar|2,5 kg|10 PO;Machado Grande|1d12 Cortante|Duas Mãos, Pesada|Trespassar|3,5 kg|30 PO;Malho|2d6 Contundente|Duas Mãos, Pesada|Derrubar|5 kg|10 PO;Mangual|1d8 Contundente|—|Drenar|1 kg|10 PO;Martelo de Guerra|1d8 Contundente|Versátil (1d10)|Empurrar|1 kg|15 PO;Picareta de Guerra|1d8 Perfurante|Versátil (1d10)|Drenar|1 kg|5 PO;Rapieira|1d8 Perfurante|Acuidade|Afligir|1 kg|25 PO;Tridente|1d8 Perfurante|Arremesso (6/18), Versátil (1d10)|Derrubar|2 kg|5 PO",
+MD:"Arco Longo|1d8 Perfurante|Duas Mãos, Munição (45/180), Pesada|Lentidão|1 kg|50 PO;Besta de Mão|1d6 Perfurante|Leve, Munição (9/36), Recarga|Afligir|1,5 kg|75 PO;Besta Pesada|1d10 Perfurante|Duas Mãos, Munição (30/120), Pesada, Recarga|Empurrar|9 kg|50 PO;Mosquete|1d12 Perfurante|Duas Mãos, Munição (12/36), Recarga|Lentidão|5 kg|500 PO;Pistola|1d10 Perfurante|Munição (9/27), Recarga|Afligir|1,5 kg|250 PO;Zarabatana|1 Perfurante|Munição (7,5/30), Recarga|Afligir|0,5 kg|10 PO"};
+const GN={SC:'Simples · corpo a corpo',SD:'Simples · à distância',MC:'Marciais · corpo a corpo',MD:'Marciais · à distância'};
+const AD="Acolchoada|Leve|11||1|4 kg|5 PO;Couro|Leve|11||0|5 kg|10 PO;Couro Batido|Leve|12||0|6,5 kg|45 PO;Gibão de Peles|Média|12|2|0|6 kg|10 PO;Cota de Malha Parcial|Média|13|2|0|10 kg|50 PO;Loriga de Escamas|Média|14|2|1|22 kg|50 PO;Couraça Peitoral|Média|14|2|0|10 kg|400 PO;Placas Parcial|Média|15|2|1|20 kg|750 PO;Cota de Anéis|Pesada|14|0|1|20 kg|30 PO;Cota de Malha|Pesada · For 13|16|0|1|27 kg|75 PO;Armadura de Talas|Pesada · For 15|17|0|1|30 kg|200 PO;Placas|Pesada · For 15|18|0|1|32 kg|1.500 PO;Escudo|Escudo|+2||0|3 kg|10 PO";
+const GD="Ácido|0,5 kg|25 PO;Água Benta|0,5 kg|25 PO;Algibeira|0,5 kg|5 PP;Aljava|0,5 kg|1 PO;Antitoxina|—|50 PO;Apito Sinalizador|—|5 PC;Aríete Portável|16,5 kg|4 PO;Armadilha de Caça|12,5 kg|5 PO;Arpéu|2 kg|2 PO;Balde|1 kg|5 PC;Baliza|3,5 kg|5 PC;Barril|35 kg|2 PO;Baú|12,5 kg|5 PO;Bolsa de Componentes|1 kg|25 PO;Cadeado|0,5 kg|10 PO;Caixa para Fogo|0,5 kg|5 PP;Caneta Tinteiro|—|2 PC;Cantil (cheio)|2,5 kg|2 PP;Cesta|1 kg|4 PP;Cobertor|1,5 kg|5 PP;Corda|2,5 kg|1 PO;Cordão|—|1 PP;Corrente|5 kg|5 PO;Escada|12,5 kg|1 PP;Esferas de Metal|1 kg (saco)|1 PO;Espelho|250 g|5 PO;Estacas de Ferro|2,5 kg|1 PO;Estojo, Mapa ou Pergaminho|0,5 kg|1 PO;Estojo, Virote de Besta|0,5 kg|1 PO;Estrepes|1 kg (saco)|1 PO;Foco Arcano|Varia|Varia;Foco Druídico|Varia|Varia;Fogo Alquímico|0,5 kg|50 PO;Frasco|—|1 PO;Garrafa de Vidro (1 litro)|1 kg|2 PO;Grilhões|3 kg|2 PO;Jarro (4 litros)|2 kg|2 PC;Kit de Artista|29 kg|40 PO;Kit de Assaltante|21 kg|16 PO;Kit de Aventureiro|27,5 kg|10 PO;Kit de Curandeiro|1,5 kg|5 PO;Kit de Diplomata|19,5 kg|39 PO;Kit de Erudito|11 kg|40 PO;Kit de Escalada|6 kg|25 PO;Kit de Explorador de Masmorras|27,5 kg|12 PO;Kit de Sacerdote|14,5 kg|33 PO;Lâmpada|0,5 kg|5 PP;Lanterna Coberta|1 kg|5 PO;Lanterna Foca-facho|1 kg|10 PO;Livro|2,5 kg|25 PO;Luneta|0,5 kg|1.000 PO;Lupa|—|100 PO;Mapa|—|1 PO;Mochila|2,5 kg|2 PO;Munição|Varia|Varia;Óleo|0,5 kg|1 PP;Pá|2,5 kg|2 PO;Papel|—|2 PP;Pé de Cabra|2,5 kg|2 PO;Perfume|—|5 PO;Pergaminho|—|1 PP;Pergaminho Mágico (1º Círculo)|—|50 PO;Pergaminho Mágico (Truque)|—|30 PO;Poção de Cura|250 g|50 PO;Pote|0,5 kg|2 PC;Pote, Ferro|5 kg|2 PO;Rações|1 kg|5 PP;Rede|1,5 kg|1 PO;Roldana e Polias|2,5 kg|1 PO;Roupas, Fantasia|2 kg|5 PO;Roupas, Finas|3 kg|15 PO;Roupas, Viagem|2 kg|2 PO;Saca|250 g|1 PC;Saco de Dormir|3,5 kg|1 PO;Símbolo Sagrado|Varia|Varia;Sino|—|1 PO;Tenda|10 kg|2 PO;Tinta|—|10 PO;Tocha|0,5 kg|1 PC;Vela|—|1 PC;Túnica|2 kg|1 PO;Veneno Básico|—|100 PO";
+const CAT={w:[],a:[],g:[],m:[],fa:[],fd:[]},TT={w:'Armas',a:'Armaduras',g:'Itens gerais',m:'Munições',fa:'Focos arcanos',fd:'Focos druídicos'};
+let tt;const toast=m=>{const t=document.getElementById('ts');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3800)};
+const hasSt=r=>S.eq.some(x=>x.k=='g'&&x.n.trim().toLowerCase()==r.trim().toLowerCase()),need=i=>i.k=='m'&&!!i.ar&&!hasSt(i.ar);
+for(const k in WD)WD[k].split(';').forEach(s=>{const a=s.split('|');CAT.w.push({c:'w',n:a[0],dm:a[1],pr:a[2],ma:a[3],p:a[4],v:a[5],g:GN[k]})});
+AD.split(';').forEach(s=>{const a=s.split('|');CAT.a.push({c:'a',n:a[0],d:a[1],ca:a[2],md:a[3],fu:a[4]=='1',p:a[5],v:a[6]})});
+GD.split(';').forEach(s=>{const a=s.split('|');CAT.g.push({c:'g',n:a[0],p:a[1],v:a[2]})});
+"Agulhas|50|Algibeira|0,5 kg|1 PO;Balas, Arma de Fogo|10|Algibeira|1 kg|3 PO;Balas, Funda|20|Algibeira|750 g|4 PC;Flechas|20|Aljava|0,5 kg|1 PO;Virotes|20|Estojo, Virote de Besta|750 g|1 PO".split(';').forEach(s=>{const a=s.split('|');CAT.m.push({c:'m',n:a[0],qt:a[1],ar:a[2],p:a[3],v:a[4]})});
+"Cajado (também um Bastão)|2 kg|5 PO;Cetro|1 kg|10 PO;Cristal|0,5 kg|10 PO;Orbe|1,5 kg|20 PO;Varinha|0,5 kg|10 PO".split(';').forEach(s=>{const a=s.split('|');CAT.fa.push({c:'g',n:a[0],d:'Foco arcano',p:a[1],v:a[2]})});
+"Cajado de madeira (também um Bastão)|2 kg|5 PO;Ramo de visco|—|1 PO;Varinha de teixo|0,5 kg|10 PO".split(';').forEach(s=>{const a=s.split('|');CAT.fd.push({c:'g',n:a[0],d:'Foco druídico',p:a[1],v:a[2]})});
+/* descrições (regras D&D 2024, adaptadas ao português; distâncias em metros) */
+const PP={Acuidade:"ao atacar, você escolhe usar o modificador de Força ou de Destreza nas jogadas de ataque e de dano (o mesmo nas duas).",
+Arremesso:"pode ser arremessada em um ataque à distância e sacada como parte do ataque; se for arma corpo a corpo, usa o mesmo modificador de atributo do ataque corpo a corpo.",
+"Duas Mãos":"exige duas mãos ao atacar.",
+"Extensão":"soma 1,5 m ao seu alcance ao atacar com ela e ao determinar seu alcance para Ataques de Oportunidade.",
+Leve:"ao realizar a ação Atacar com uma arma Leve, você pode fazer um ataque extra como Ação Bônus no mesmo turno, com uma arma Leve diferente; nesse ataque extra você não soma o modificador de atributo ao dano (a menos que seja negativo).",
+"Munição":"só permite ataque à distância se você tiver munição. Cada ataque gasta 1 peça, e sacá-la faz parte do ataque (arma de uma mão exige mão livre para carregar). Após a luta, 1 minuto para recuperar metade da munição gasta (arredondando para baixo); o resto se perde.",
+Pesada:"desvantagem nas jogadas de ataque se for arma corpo a corpo e sua Força for menor que 13, ou se for à distância e sua Destreza for menor que 13.",
+Recarga:"só é possível disparar uma peça de munição por ação, Ação Bônus ou Reação, independentemente de quantos ataques você normalmente faz.",
+"Versátil":"pode ser usada com uma ou duas mãos; com duas mãos em ataque corpo a corpo, causa o dano indicado entre parênteses."};
+const MP={"Afligir":"se você acertar e causar dano, tem Vantagem na sua próxima jogada de ataque contra essa criatura até o fim do seu próximo turno.",
+"Ágil":"ao fazer o ataque extra da propriedade Leve, você pode fazê-lo como parte da ação Atacar em vez de Ação Bônus (apenas uma vez por turno).",
+Drenar:"se você acertar, a criatura tem Desvantagem na próxima jogada de ataque dela antes do início do seu próximo turno.",
+Empurrar:"se você acertar, pode empurrar a criatura até 3 m em linha reta para longe de você, se ela for Grande ou menor.",
+Garantido:"se sua jogada de ataque errar, você causa à criatura dano igual ao modificador de atributo usado no ataque (mesmo tipo de dano da arma).",
+Lentidão:"se você acertar e causar dano, pode reduzir o Deslocamento da criatura em 3 m até o início do seu próximo turno (o efeito não passa de 3 m, mesmo com vários acertos).",
+Derrubar:"se você acertar, pode forçar a criatura a fazer uma salvaguarda de Constituição (CD 8 + modificador de atributo do ataque + Bônus de Proficiência); se falhar, fica Caída.",
+Trespassar:"se você acertar um ataque corpo a corpo, pode fazer outro ataque com a arma contra uma segunda criatura a até 1,5 m da primeira e ao seu alcance; se acertar, ela sofre o dano da arma sem somar o modificador de atributo (apenas uma vez por turno)."};
+const AMM={"Arco Curto":"Flecha","Arco Longo":"Flecha","Besta Leve":"Virote","Besta de Mão":"Virote","Besta Pesada":"Virote",Funda:"Bala","Mosquete":"Bala",Pistola:"Bala",Zarabatana:"Agulha"};
+function dw(c){const [ct,tp]=c.g.split(' · ');let o='Arma '+(ct=='Simples'?'simples':'marcial')+' '+tp+'. Dano: '+c.dm+'. ';
+ const ps=c.pr&&c.pr!='—'?c.pr.split(/,\s*(?![^(]*\))/):[];
+ if(!ps.length)o+='Propriedades: nenhuma. ';else{o+='Propriedades — ';o+=ps.map(p=>{const m=p.match(/^([^(]+?)\s*(?:\((.*)\))?$/),n=m[1].trim(),a=m[2];let t=PP[n]||'';
+  if(n=='Arremesso'||n=='Munição'){const r=a.split('/');t+=' Alcance normal '+r[0]+' m, longo '+r[1]+' m (desvantagem além do alcance normal; não é possível atacar além do longo).';if(n=='Munição')t=t.replace('só permite','só permite (munição: '+(AMM[c.n]||'—')+')')}
+  if(n=='Versátil')t=t.replace('o dano indicado entre parênteses','1'+a.slice(1));
+  if(n=='Duas Mãos'&&c.n=='Lança de Montaria')t='exige duas mãos ao atacar, a menos que você esteja montado.';
+  return n+(a&&n!='Arremesso'&&n!='Munição'&&n!='Versátil'?' ('+a+')':'')+': '+t}).join(' ')+' '}
+ return (o+'Maestria — '+c.ma+': '+(MP[c.ma]||'')+' (só pode ser usada por quem tem uma característica que desbloqueie a maestria da arma, como Maestria em Armas).').replace('1'+'(','(')}
+const AF={Acolchoada:"Camadas de tecido acolchoado e enchimento.",Couro:"Peitoral e ombreiras de couro endurecido em óleo fervente; o resto é de couro mais macio e flexível.","Couro Batido":"Couro resistente reforçado com rebites ou espinhos.","Gibão de Peles":"Peles e peles grossas, típicas de tribos bárbaras e povos de regiões selvagens.","Cota de Malha Parcial":"Camisa de anéis de metal entrelaçados, usada por baixo das roupas.","Loriga de Escamas":"Colete e calças de couro cobertos por pedaços sobrepostos de metal, como escamas de peixe.","Couraça Peitoral":"Peitoral de metal sobre couro flexível; protege o tronco e deixa pernas e braços livres.","Placas Parcial":"Placas de metal moldadas que cobrem a maior parte do corpo, sem proteger as pernas.","Cota de Anéis":"Armadura de couro com anéis pesados costurados; costuma ser usada por quem não pode pagar uma cota de malha melhor.","Cota de Malha":"Anéis de metal entrelaçados em camadas, com acolchoado por baixo para amortecer golpes.","Armadura de Talas":"Tiras verticais de metal rebitadas em couro, com malha flexível protegendo as juntas.",Placas:"Placas de metal moldadas e articuladas que cobrem o corpo todo, com luvas, botas pesadas, elmo e acolchoado por baixo."};
+const AT={Leve:"1 minuto para vestir e 1 minuto para despir",Média:"5 minutos para vestir e 1 minuto para despir",Pesada:"10 minutos para vestir e 5 minutos para despir"};
+function da(c){if(c.n=='Escudo')return "Escudo. Equipar ou desequipar usa a ação Utilizar. Dá +2 de CA, mas só se você tiver treinamento com Escudo. Uma criatura só pode empunhar um Escudo por vez.";
+ const ct=c.d.split(' · ')[0],fo=c.d.split(' · ')[1],ch=/^\d+$/.test(c.ca)&&c.md===''&&ct!='Pesada'?'':'';
+ let o='Armadura '+ct.toLowerCase()+' ('+AT[ct]+'). '+(AF[c.n]||'')+' CA base '+c.ca+(c.md!==''&&ct!='Pesada'?' + modificador de Des'+(c.md?' (máx. '+c.md+')':''):'')+'. ';
+ if(ct=='Leve'&&!c.md)o=o.replace('. CA base',' . CA base').replace(' . ','. ');
+ if(fo)o+='Exige '+fo.replace('For ','Força ')+': com Força menor, seu Deslocamento é reduzido em 3 m. ';
+ if(c.fu)o+='Desvantagem em testes de Destreza (Furtividade). ';
+ return o+'Sem treinamento, você tem Desvantagem em qualquer Teste de D20 de Força ou Destreza e não pode conjurar magias. Só é possível usar uma armadura por vez.'}
+const KS={a:"Kit de aventureiro com o seguinte conteúdo: ",};
+const DG={
+"Ácido":"Ao realizar a ação Atacar, você pode substituir um ataque por arremessar um frasco de ácido. Escolha uma criatura ou objeto visível a até 6 m: o alvo deve ser bem-sucedido em uma salvaguarda de Destreza (CD 8 + seu modificador de Destreza + Bônus de Proficiência) ou sofre 2d6 de dano Ácido.",
+"Água Benta":"Ao realizar a ação Atacar, você pode substituir um ataque por arremessar um frasco de água benta. Escolha uma criatura visível a até 6 m: o alvo deve ser bem-sucedido em uma salvaguarda de Destreza (CD 8 + seu modificador de Destreza + Bônus de Proficiência) ou sofre 2d8 de dano Radiante, se for um Ínfero ou um Morto-Vivo.",
+"Algibeira":"Comporta até 3 kg em cerca de 6 litros.",
+"Aljava":"Comporta até 20 flechas.",
+"Antitoxina":"Como Ação Bônus, você pode beber um frasco de antitoxina para ter Vantagem em salvaguardas para evitar ou encerrar a condição Envenenado por 1 hora.",
+"Apito Sinalizador":"Quando soprado com a ação Utilizar, produz um som que pode ser ouvido a até 180 m.",
+"Aríete Portável":"Pode ser usado para arrombar portas. Ao fazer isso, você recebe +4 no teste de Força. Outro personagem pode ajudar, concedendo Vantagem no teste.",
+"Armadilha de Caça":"Com a ação Utilizar, você arma a armadilha: um anel de aço serrilhado que se fecha quando uma criatura pisa na placa de pressão central. Ela é presa por uma corrente pesada a um objeto imóvel, como uma árvore ou uma estaca cravada no chão. A criatura que pisar na placa deve ser bem-sucedida em uma salvaguarda de Destreza CD 13 ou sofre 1d4 de dano Perfurante e tem o Deslocamento reduzido a 0 até o início do seu próximo turno. Depois disso, até se soltar, seu movimento fica limitado ao comprimento da corrente (normalmente 1 m). Uma criatura pode usar uma ação para fazer um teste de Força (Atletismo) CD 13 e libertar a si mesma ou outra criatura ao seu alcance; cada falha causa 1 de dano Perfurante à criatura presa.",
+"Arpéu":"Com a ação Utilizar, você pode arremessar o arpéu em uma grade, beirada ou outro ponto de apoio a até 15 m; ele se prende se você for bem-sucedido em um teste de Destreza (Acrobacia) CD 13. Se você amarrou uma corda ao arpéu, pode escalá-la.",
+"Balde":"Comporta até meio pé cúbico (cerca de 14 litros).",
+"Baliza":"Tem 3 m de comprimento. Você pode usá-la para tocar algo a até 3 m de distância. Se precisar fazer um teste de Força (Atletismo) em um Salto em Altura ou em Distância, pode usá-la como vara de salto, tendo Vantagem no teste.",
+"Barril":"Comporta até 150 litros de líquido ou cerca de 110 litros (4 pés cúbicos) de bens secos.",
+"Baú":"Comporta até 12 pés cúbicos (cerca de 340 litros) de conteúdo.",
+"Bolsa de Componentes":"É à prova d'água e cheia de compartimentos que guardam todos os componentes materiais gratuitos das suas magias.",
+"Cadeado":"Acompanha uma chave. Sem a chave, uma criatura pode usar Ferramentas de Ladrão para abri-lo com um teste de Destreza (Prestidigitação) CD 15 bem-sucedido.",
+"Caixa para Fogo":"Pequeno recipiente com sílex, pederneira e isca (geralmente tecido seco embebido em óleo leve) para acender fogo. Usá-la para acender uma Vela, Lâmpada, Lanterna, Tocha ou qualquer coisa com combustível exposto exige uma Ação Bônus; acender qualquer outro fogo leva 1 minuto.",
+"Caneta Tinteiro":"Usada com tinta para escrever ou desenhar.",
+"Cantil (cheio)":"Comporta até 2 litros (4 pintas). Se você não beber água suficiente, corre o risco de desidratação.",
+"Cesta":"Comporta até 20 kg em 2 pés cúbicos (cerca de 56 litros).",
+"Cobertor":"Enquanto estiver enrolado em um cobertor, você tem Vantagem em salvaguardas contra frio extremo.",
+"Corda":"Com a ação Utilizar, você pode dar um nó na corda se for bem-sucedido em um teste de Destreza (Prestidigitação) CD 10. A corda pode ser rompida com um teste de Força (Atletismo) CD 20. Você só pode amarrar uma criatura relutante se ela estiver Agarrada, Incapacitada ou Contida; se as pernas dela estiverem amarradas, ela fica Contida até escapar. Escapar da corda exige um teste de Destreza (Acrobacia) CD 15 como ação.",
+"Cordão":"Tem 3 m de comprimento. Você pode dar um nó nele com a ação Utilizar.",
+"Corrente":"Com a ação Utilizar, você pode prender uma corrente em volta de uma criatura relutante a até 1,5 m que esteja Agarrada, Incapacitada ou Contida, se for bem-sucedido em um teste de Força (Atletismo) CD 13. Se as pernas dela estiverem presas, ela fica Contida até escapar. Escapar exige um teste de Destreza (Acrobacia) CD 18 como ação; romper a corrente exige um teste de Força (Atletismo) CD 20 como ação.",
+"Escada":"Tem 3 m de altura. Você precisa escalar para subir ou descer.",
+"Esferas de Metal":"Com a ação Utilizar, você pode espalhar as esferas do saco, cobrindo uma área plana de 3 m de lado a até 3 m de você. Uma criatura que entre na área pela primeira vez em um turno deve ser bem-sucedida em uma salvaguarda de Destreza CD 10 ou fica Caída. Leva 10 minutos para recolher as esferas.",
+"Espelho":"Um espelho de aço de mão, útil para cuidados pessoais, mas também para espiar em esquinas e refletir luz como sinal.",
+"Estacas de Ferro":"Vêm em feixes de dez. Com a ação Utilizar, você pode usar um objeto contundente (como um Martelo Leve) para cravar uma estaca em madeira, terra ou material semelhante, para travar uma porta ou para amarrar uma Corda ou Corrente a ela.",
+"Estojo, Mapa ou Pergaminho":"Comporta até 10 folhas de papel ou 5 folhas de pergaminho.",
+"Estojo, Virote de Besta":"Comporta até 20 virotes.",
+"Estrepes":"Com a ação Utilizar, você pode espalhar os estrepes do saco, cobrindo uma área de 1,5 m de lado a até 1,5 m de você. Uma criatura que entre na área pela primeira vez em um turno deve ser bem-sucedida em uma salvaguarda de Destreza CD 15 ou sofre 1 de dano Perfurante e tem o Deslocamento reduzido a 0 até o início do seu próximo turno. Leva 10 minutos para recolher os estrepes.",
+"Foco Arcano":"Item (cristal, orbe, bastão, cajado ou varinha) cravejado ou entalhado para canalizar magia arcana. Feiticeiros, Bruxos e Magos podem usá-lo como foco de conjuração. Veja Focos arcanos no menu para as formas e preços.",
+"Foco Druídico":"Objeto (ramo de visco, cajado de madeira ou varinha de teixo) entalhado, amarrado com fitas ou pintado para canalizar magia primal. Druidas e Patrulheiros podem usá-lo como foco de conjuração. Veja Focos druídicos no menu para as formas e preços.",
+"Fogo Alquímico":"Ao realizar a ação Atacar, você pode substituir um ataque por arremessar um frasco de fogo alquímico. Escolha uma criatura ou objeto visível a até 6 m: o alvo deve ser bem-sucedido em uma salvaguarda de Destreza (CD 8 + seu modificador de Destreza + Bônus de Proficiência) ou sofre 1d4 de dano de Fogo e começa a queimar (veja o glossário de regras).",
+"Frasco":"Comporta até 4 onças (cerca de 120 ml).",
+"Garrafa de Vidro (1 litro)":"Uma garrafa de vidro que comporta cerca de 1 litro (1½ pinta).",
+"Grilhões":"Com a ação Utilizar, você pode algemar uma criatura Pequena ou Média relutante a até 1,5 m que esteja Agarrada, Incapacitada ou Contida, se for bem-sucedido em um teste de Destreza (Prestidigitação) CD 13. Enquanto algemada, a criatura tem Desvantagem em jogadas de ataque e fica Contida se os grilhões estiverem presos a uma corrente ou gancho fixo. Escapar exige um teste de Destreza (Prestidigitação) CD 20 como ação; rompê-los exige um teste de Força (Atletismo) CD 25 como ação. Cada par acompanha uma chave; sem ela, uma criatura pode usar Ferramentas de Ladrão para abrir a fechadura com um teste de Destreza (Prestidigitação) CD 15.",
+"Jarro (4 litros)":"Comporta até 1 galão (cerca de 4 litros).",
+"Kit de Artista":"Contém: Mochila, Saco de Dormir, Sino, Lanterna Foca-facho, 3 Roupas Fantasia, Espelho, 8 frascos de Óleo, 9 dias de Rações, Caixa para Fogo e Cantil.",
+"Kit de Assaltante":"Contém: Mochila, Esferas de Metal, Sino, 10 Velas, Pé de Cabra, Lanterna Coberta, 7 frascos de Óleo, 5 dias de Rações, Corda, Caixa para Fogo e Cantil.",
+"Kit de Aventureiro":"Contém: Mochila, Saco de Dormir, 2 frascos de Óleo, 10 dias de Rações, Corda, Caixa para Fogo, 10 Tochas e Cantil.",
+"Kit de Curandeiro":"Tem dez usos. Com a ação Utilizar, você pode gastar um uso para estabilizar uma criatura Inconsciente com 0 Pontos de Vida, sem precisar fazer um teste de Sabedoria (Medicina).",
+"Kit de Diplomata":"Contém: Baú, Roupas Finas, Tinta, 5 Canetas Tinteiro, Lâmpada, 2 Estojos de Mapa ou Pergaminho, 4 frascos de Óleo, 5 folhas de Papel, 5 folhas de Pergaminho, Perfume e Caixa para Fogo.",
+"Kit de Erudito":"Contém: Mochila, Livro, Tinta, Caneta Tinteiro, Lâmpada, 10 frascos de Óleo, 10 folhas de Pergaminho e Caixa para Fogo.",
+"Kit de Escalada":"Inclui sapatilhas, luvas, pítons e um arnês. Com a ação Utilizar, você pode usá-lo para se ancorar: você não pode cair mais de 7,5 m do ponto de ancoragem nem se afastar mais de 7,5 m dele sem desfazer a ancoragem como Ação Bônus.",
+"Kit de Explorador de Masmorras":"Contém: Mochila, Estrepes, Pé de Cabra, 2 frascos de Óleo, 10 dias de Rações, Corda, Caixa para Fogo, 10 Tochas e Cantil.",
+"Kit de Sacerdote":"Contém: Mochila, Cobertor, Água Benta, Lâmpada, 7 dias de Rações, Túnica e Caixa para Fogo.",
+"Lâmpada":"Queima Óleo como combustível, emitindo Luz Plena em um raio de 4,5 m e Penumbra por mais 9 m.",
+"Lanterna Coberta":"Queima Óleo como combustível, emitindo Luz Plena em um raio de 9 m e Penumbra por mais 9 m. Como Ação Bônus, você pode baixar a cobertura, reduzindo a luz a Penumbra em um raio de 1,5 m, ou levantá-la de novo.",
+"Lanterna Foca-facho":"Queima Óleo como combustível, emitindo Luz Plena em um Cone de 18 m e Penumbra por mais 18 m.",
+"Livro":"Contém ficção ou não ficção. Se você consultar um Livro de não ficção preciso sobre um tema, ganha +5 em testes de Inteligência (Arcanismo, História, Natureza ou Religião) sobre esse tema.",
+"Luneta":"Objetos vistos através dela são ampliados para o dobro do tamanho.",
+"Lupa":"Concede Vantagem em qualquer teste de atributo para avaliar ou inspecionar um item muito detalhado. Acender fogo com ela exige luz tão forte quanto a do sol para focalizar, isca para incendiar e cerca de 5 minutos.",
+"Mapa":"Se você consultar um Mapa preciso, ganha +5 em testes de Sabedoria (Sobrevivência) para encontrar o caminho no lugar representado nele.",
+"Mochila":"Comporta até 15 kg em 1 pé cúbico (cerca de 28 litros). Também pode servir como alforje.",
+"Munição":"Exigida por armas com a propriedade Munição; a descrição da arma indica o tipo usado. Veja o menu Munições para os pacotes disponíveis.",
+"Óleo":"Você pode encharcar uma criatura, objeto ou espaço com Óleo, ou usá-lo como combustível. Encharcar criatura ou objeto: ao realizar a ação Atacar, pode substituir um ataque por arremessar um frasco de óleo em alvo a até 6 m; o alvo deve ser bem-sucedido em uma salvaguarda de Destreza (CD 8 + modificador de Destreza + Bônus de Proficiência) ou fica coberto de óleo; se sofrer dano de Fogo antes de o óleo secar (após 1 minuto), sofre 5 de dano de Fogo extra. Encharcar um espaço: com a ação Utilizar, você derrama o óleo em chão plano, cobrindo 1,5 m de lado a até 1,5 m de você; se aceso, queima até o fim do turno 2 rodadas depois (12 segundos) e causa 5 de dano de Fogo a quem entrar na área ou terminar o turno nela (uma vez por turno). Combustível: serve para Lâmpadas e Lanternas; aceso, um frasco queima por 6 horas, não necessariamente seguidas.",
+"Pá":"Trabalhando por 1 hora, você pode cavar um buraco de 1,5 m de lado em solo ou material semelhante.",
+"Papel":"Uma folha de papel comporta cerca de 250 palavras manuscritas.",
+"Pé de Cabra":"Usar um pé de cabra concede Vantagem em testes de Força em que a alavanca possa ser aplicada.",
+"Perfume":"Vem em um frasco de 4 onças. Por 1 hora após aplicá-lo em si, você tem Vantagem em testes de Carisma (Persuasão) para influenciar um Humanoide Indiferente a até 1,5 m.",
+"Pergaminho":"Uma folha de pergaminho comporta cerca de 250 palavras manuscritas.",
+"Pergaminho Mágico (1º Círculo)":"Item mágico com as palavras de uma magia de 1º círculo definida pelo criador. Se a magia estiver na lista de magias da sua classe, você pode ler o pergaminho e conjurá-la com o tempo de conjuração normal, sem componentes materiais. Se a magia exigir salvaguarda ou jogada de ataque, a CD é 13 e o bônus de ataque é +5. O pergaminho se desintegra ao final da conjuração.",
+"Pergaminho Mágico (Truque)":"Item mágico com as palavras de um truque definido pelo criador. Se a magia estiver na lista de magias da sua classe, você pode ler o pergaminho e conjurá-la com o tempo de conjuração normal, sem componentes materiais. Se a magia exigir salvaguarda ou jogada de ataque, a CD é 13 e o bônus de ataque é +5. O pergaminho se desintegra ao final da conjuração.",
+"Poção de Cura":"Esta poção é um item mágico. Como Ação Bônus, você pode bebê-la ou administrá-la a outra criatura a até 1,5 m. A criatura que beber o fluido vermelho mágico do frasco recupera 2d4 + 2 Pontos de Vida.",
+"Pote":"Comporta até 1 pinta (cerca de 0,5 litro).",
+"Pote, Ferro":"Comporta até 1 galão (cerca de 4 litros).",
+"Rações":"Alimento pronto para viagem, como carne-seca, frutas secas, biscoito duro e nozes. Veja Desnutrição no glossário de regras para os riscos de não se alimentar. (Preço e peso referem-se a 1 dia.)",
+"Rede":"Ao realizar a ação Atacar, você pode substituir um ataque por arremessar uma Rede. Escolha uma criatura visível a até 4,5 m: o alvo deve ser bem-sucedido em uma salvaguarda de Destreza (CD 8 + seu modificador de Destreza + Bônus de Proficiência) ou fica Contido até escapar (sucesso automático se for Enorme ou maior). Para escapar, o alvo ou uma criatura a até 1,5 m dele deve usar uma ação para fazer um teste de Força (Atletismo) CD 10. Destruir a Rede (CA 10; 5 PV; imunidade a dano Contundente, de Veneno e Psíquico) também liberta o alvo.",
+"Roldana e Polias":"Permite que você levante até quatro vezes o peso que normalmente consegue erguer.",
+"Roupas, Fantasia":"Enquanto usar uma fantasia, você tem Vantagem em qualquer teste de atributo para se passar pela pessoa ou tipo de pessoa que ela representa.",
+"Roupas, Finas":"Feitas de tecidos caros e adornadas com detalhes primorosos. Alguns eventos e locais admitem apenas pessoas vestidas assim.",
+"Roupas, Viagem":"Roupas resistentes, feitas para viajar em diversos ambientes.",
+"Saca":"Comporta até 15 kg em 1 pé cúbico (cerca de 28 litros).",
+"Saco de Dormir":"Acomoda uma criatura Pequena ou Média. Dentro dele, você é automaticamente bem-sucedido em salvaguardas contra frio extremo.",
+"Símbolo Sagrado":"Assume uma das formas a seguir, enfeitada ou pintada para canalizar magia divina: Amuleto (usado ou empunhado, 5 PO, 0,5 kg), Emblema (em tecido ou Escudo, 5 PO) ou Relicário (empunhado, 5 PO, 1 kg). Clérigos e Paladinos podem usá-lo como foco de conjuração.",
+"Sino":"Quando tocado com a ação Utilizar, produz um som que pode ser ouvido a até 18 m.",
+"Tenda":"Acomoda até duas criaturas Pequenas ou Médias.",
+"Tinta":"Vem em um frasco de 1 onça, o suficiente para escrever cerca de 500 páginas.",
+"Tocha":"Queima por 1 hora, emitindo Luz Plena em um raio de 6 m e Penumbra por mais 6 m. Ao realizar a ação Atacar, você pode atacar com a tocha como arma simples corpo a corpo; se acertar, o alvo sofre 1 de dano de Fogo.",
+"Vela":"Por 1 hora, uma vela acesa emite Luz Plena em um raio de 1,5 m e Penumbra por mais 1,5 m.",
+"Túnica":"Tem significado profissional ou cerimonial. Alguns eventos e locais admitem apenas pessoas vestidas com uma túnica de certas cores ou símbolos.",
+"Veneno Básico":"Como Ação Bônus, você pode usar um frasco de veneno básico para revestir uma arma ou até três peças de munição. Uma criatura que sofra dano Perfurante ou Cortante da arma ou munição envenenada sofre 1d4 de dano de Veneno extra. Depois de aplicado, o veneno mantém a potência por 1 minuto ou até seu dano ser causado, o que ocorrer primeiro."};
+const DM={"Agulhas":"Munição para Zarabatana.","Balas, Arma de Fogo":"Munição para Mosquete e Pistola.","Balas, Funda":"Munição para Funda.","Flechas":"Munição para Arco Curto e Arco Longo. Uma Aljava comporta até 20 flechas.","Virotes":"Munição para Besta Leve, Besta de Mão e Besta Pesada. Um Estojo comporta até 20 virotes."};
+const DF={"Cajado (também um Bastão)":"Foco arcano: cajado especialmente construído, que também pode ser usado como Bordão.","Cetro":"Foco arcano em forma de cetro (bastão cerimonial).","Cristal":"Foco arcano: cristal lapidado para canalizar magia arcana.","Orbe":"Foco arcano: esfera de cristal ou metal para canalizar magia arcana.","Varinha":"Foco arcano: pedaço de madeira em forma de varinha.","Cajado de madeira (também um Bastão)":"Foco druídico: cajado de madeira entalhado, que também pode ser usado como Bordão.","Ramo de visco":"Foco druídico: ramo de visco, planta sagrada para druidas.","Varinha de teixo":"Foco druídico: varinha feita de teixo."};
+const DFA=" Feiticeiros, Bruxos e Magos podem usá-lo como foco de conjuração (foco arcano).",DFD=" Druidas e Patrulheiros podem usá-lo como foco de conjuração (foco druídico).";
+CAT.w.forEach(c=>c.d=dw(c));CAT.a.forEach(c=>c.d=da(c));CAT.g.forEach(c=>{if(DG[c.n])c.d=DG[c.n]});
+CAT.m.forEach(c=>c.d=DM[c.n]||'');CAT.fa.forEach(c=>c.d=DF[c.n]+DFA);CAT.fd.forEach(c=>c.d=DF[c.n]+DFD);
+const KEY='ficha-inventario-v1',$=s=>document.querySelector(s),uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let S={nome:'',classe:'',sub:'',raca:'',des:0,inv:[],eq:[]};
+try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const find=id=>{for(const l of['inv','eq']){const i=S[l].findIndex(x=>x.id==id);if(i>=0)return{l,i,it:S[l][i]}}};
+function mk(c){const b={id:uid(),k:c.c,key:c.c+c.n,n:c.n,d:c.d||'',p:c.p,v:c.v,q:1};
+ if(c.c=='w')Object.assign(b,{dm:c.dm,at:'',ma:c.ma,pr:c.pr});
+ if(c.c=='m')Object.assign(b,{ar:c.ar,q:+c.qt,d:'Pacote de '+c.qt+' · armazenamento: '+c.ar});
+ if(c.c=='a')Object.assign(b,{ca:c.ca,md:c.md,fu:c.fu});return b}
+const inp=(f,v,x='')=>`<input data-f="${f}" value="${esc(v)}" ${x}>`;
+function row(i){const x=i.k=='w'?`<div class="sub"><label>Dano de ataque${inp('dm',i.dm)}</label><label>Ataque${inp('at',i.at,'placeholder="+0"')}</label><label>Maestria${inp('ma',i.ma)}</label><label class="w">Propriedades${inp('pr',i.pr)}</label></div>`
+ :i.k=='a'?`<div class="sub"><label>CA${inp('ca',i.ca)}</label><label>Limite do bônus de Des${inp('md',i.md,'placeholder="sem limite"')}</label><label class="ck"><input type="checkbox" data-f="fu" ${i.fu?'checked':''}>Desvantagem em Furtividade</label></div>`:i.k=='m'?`<div class="sub"><label class="w">Armazenamento necessário (precisa estar equipado)${inp('ar',i.ar)}</label></div>`:'';
+ return `<div class="it ${i.k}${i.q==0?' z':''}${i.o?' o':''}" data-id="${i.id}"><div class="main"><b class="grip" title="Arraste">⠿</b><input type="number" min="0" class="q" data-f="q" value="${i.q}" placeholder="Qtd">${inp('n',i.n,'placeholder="Nome"')}<span class="dc" data-a="t" title="Expandir">${esc(i.d)}</span>${inp('p',i.p,'placeholder="Peso"')}${inp('v',i.v,'placeholder="Valor"')}<span class="cn"><button data-a="-" title="Diminuir">−</button><button data-a="+" title="Aumentar">+</button></span><button class="tg" data-a="t" title="Expandir ou recolher">▾</button><button class="x" data-a="x" title="Excluir">✕</button></div><div class="ex"><label class="dd">Descrição<textarea data-f="d" placeholder="Descrição completa">${esc(i.d)}</textarea></label>${x}</div></div>`}
+function chk(){const m=[];S.eq=S.eq.filter(i=>{if(need(i)){S.inv.push(i);m.push(i.n);return false}return true});if(m.length)toast('Sem o armazenamento equipado: '+m.join(', ')+' voltou ao inventário')}
+function render(){chk();document.querySelectorAll('.lst').forEach(l=>l.innerHTML=S[l.dataset.l].map(row).join(''));calc()}
+function calc(){const d=+S.des||0,a=S.eq.find(i=>i.k=='a'&&!/^\+/.test(i.ca)),s=S.eq.find(i=>i.k=='a'&&/^\+/.test(i.ca));let base=10,dx=d,t='10 + Des';
+ if(a){base=parseInt(a.ca)||10;const m=a.md===''||a.md==null?NaN:+a.md;if(!isNaN(m))dx=m===0?0:Math.min(d,m);t=a.n+' '+base+' + Des '+dx}else t='Sem armadura: 10 + Des '+d;
+ const b=s?parseInt(s.ca)||0:0;if(s)t+=' + '+s.n+' '+b;$('#ca').textContent=base+dx+b;$('#cad').textContent=t}
+document.querySelectorAll('[data-i]').forEach(e=>{e.value=S[e.dataset.i]??'';e.oninput=()=>{S[e.dataset.i]=e.type=='number'?+e.value||0:e.value;calc();save()}});
+document.addEventListener('input',e=>{const f=e.target.dataset.f,r=e.target.closest('.it');if(!f||!r)return;const o=find(r.dataset.id);if(!o)return;
+ o.it[f]=e.target.type=='checkbox'?e.target.checked:f=='q'?Math.max(0,+e.target.value||0):e.target.value;if(f=='q')r.classList.toggle('z',o.it.q==0);if(f=='d')r.querySelector('.dc').textContent=e.target.value;calc();save()});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const r=b.closest('.it'),o=find(r.dataset.id),a=b.dataset.a;
+ if(a=='t'){o.it.o=!o.it.o;r.classList.toggle('o',!!o.it.o);save();return}
+ if(a=='x'){if(!b.dataset.t){b.dataset.t=1;b.textContent='?';setTimeout(()=>{delete b.dataset.t;b.textContent='✕'},2500);return}S[o.l].splice(o.i,1);render();save();return}
+ o.it.q=Math.max(0,o.it.q+(a=='+'?1:-1));const q=r.querySelector('.q');q.value=o.it.q;r.classList.toggle('z',o.it.q==0);save()});
+$('#nw').onclick=()=>{S.inv.push({id:uid(),k:'g',key:'',n:'',d:'',p:'',v:'',q:1,o:true});render();save()};
+/* painel de catalogo */
+let cc=null,cl=[],selc=new Set();
+function list(){const q=$('#sq').value.toLowerCase();let h='',g='';cl.forEach((c,k)=>{if(q&&!c.n.toLowerCase().includes(q))return;if(c.g&&c.g!=g){g=c.g;h+=`<div class="gh">${g}</div>`}
+ const m=c.c=='w'?c.dm+' · '+c.p+' · '+c.v:c.c=='a'?'CA '+c.ca+' · '+c.p+' · '+c.v:c.c=='m'?c.qt+' un. · '+c.ar+' · '+c.p+' · '+c.v:c.p+' · '+c.v;h+=`<div class="cr${selc.has(k)?' sel':''}" data-k="${k}"><b class="grip" title="Arraste">⠿</b><b class="n">${esc(c.n)}</b><span class="m">${esc(m)}</span></div>`});$('#cl').innerHTML=h}
+function open(c){if(cc==c){cc=null}else{cc=c;cl=CAT[c];selc.clear();$('#pt').textContent=TT[c];$('#sq').value=''}
+ $('#pn').classList.toggle('on',!!cc);document.body.classList.toggle('po',!!cc);document.querySelectorAll('#sd button').forEach(b=>b.classList.toggle('on',b.dataset.c==cc));if(cc)list()}
+document.querySelectorAll('#sd button').forEach(b=>b.onclick=()=>open(b.dataset.c));$('#px').onclick=()=>open(cc);$('#sq').oninput=list;
+$('#cl').addEventListener('click',e=>{const r=e.target.closest('.cr');if(!r||e.target.closest('.grip'))return;const k=+r.dataset.k;selc.has(k)?selc.delete(k):selc.add(k);r.classList.toggle('sel')});
+function put(ks,l,at){const arr=S[l];ks.forEach(k=>{const n=mk(cl[k]),ex=arr.find(x=>x.key==n.key);if(l=='eq'&&need(n))return toast('Equipe antes: '+n.ar);if(ex)ex.q+=n.q;else arr.splice(at++,0,n)});selc.clear();list();render();save()}
+$('#ad').onclick=()=>{if(selc.size)put([...selc],'inv',S.inv.length)};
+/* arrastar e soltar */
+let dr=null;
+document.addEventListener('pointerdown',e=>{const g=e.target.closest('.grip');if(!g)return;e.preventDefault();const it=g.closest('.it'),cr=g.closest('.cr');let src,lb;
+ if(it){src={t:'i',id:it.dataset.id};lb=find(src.id).it.n||'Item';it.classList.add('dg')}else{const k=+cr.dataset.k,ks=selc.has(k)?[...selc]:[k];src={t:'c',ks};lb=ks.length>1?ks.length+' itens':cl[k].n}
+ const gh=document.createElement('div');gh.className='ghost';gh.textContent=lb;document.body.appendChild(gh);const ph=document.createElement('div');ph.className='ph';
+ dr={src,gh,ph,g,l:null,idx:0};mv(e);g.setPointerCapture(e.pointerId);g.addEventListener('pointermove',mv);g.addEventListener('pointerup',up);g.addEventListener('pointercancel',up)});
+function mv(e){const d=dr;d.gh.style.left=e.clientX+12+'px';d.gh.style.top=e.clientY+12+'px';const el=document.elementFromPoint(e.clientX,e.clientY),lst=el&&el.closest('.lst');d.ph.remove();d.l=null;if(!lst)return;
+ d.l=lst.dataset.l;const rows=[...lst.querySelectorAll('.it:not(.dg)')];let idx=rows.length;for(let i=0;i<rows.length;i++){const b=rows[i].getBoundingClientRect();if(e.clientY<b.top+b.height/2){idx=i;break}}
+ d.idx=idx;lst.insertBefore(d.ph,rows[idx]||null)}
+function up(){const d=dr;dr=null;d.g.removeEventListener('pointermove',mv);d.g.removeEventListener('pointerup',up);d.g.removeEventListener('pointercancel',up);d.gh.remove();d.ph.remove();
+ if(d.l&&d.src.t=='c')return put(d.src.ks,d.l,d.idx);
+ if(d.l){const f=find(d.src.id);if(f){if(d.l=='eq'&&need(f.it))toast('Equipe antes: '+f.it.ar);else{S[f.l].splice(f.i,1);S[d.l].splice(d.idx,0,f.it)}}}render();save()}
+render();
+</script></body></html>

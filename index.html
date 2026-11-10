@@ -16,7 +16,8 @@ h2 button{margin-left:auto}
 .top{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:center}.f{display:grid;gap:8px}
 label{font-size:11px;color:#4a3b2a;display:block}
 input{font:inherit;color:var(--ink);background:transparent;border:0;border-bottom:1px solid var(--ln);padding:1px 4px;width:100%;min-width:0}
-input:focus{outline:0;background:#fbf6e6;border-bottom-color:var(--red)}
+input:focus,select:focus{outline:0;background:#fbf6e6;border-bottom-color:var(--red)}
+select{font:inherit;color:var(--ink);background:#fbf6e6;border:0;border-bottom:1px solid var(--ln);padding:4px 6px;width:100%;min-width:0;font-size:15px}
 .f input{font-size:15px;background:#fbf6e6;padding:4px 6px}
 .ca{width:110px;text-align:center;border:3px solid var(--red);border-radius:6px 6px 50% 50%;padding:6px 4px 14px;background:#fbf6e6}.ca small{display:block;font-size:11px;color:var(--red);font-weight:bold}.ca b{font-size:38px;line-height:1;color:var(--red)}.ca i{display:block;font-size:9px;color:#4a3b2a;margin-top:4px}
 button{font:inherit;font-size:12px;border:1px solid var(--red);background:var(--pg);color:var(--red);cursor:pointer;padding:2px 9px;border-radius:3px}button:hover{background:var(--red);color:var(--pg)}
@@ -29,6 +30,17 @@ button{font:inherit;font-size:12px;border:1px solid var(--red);background:var(--
 .sub{display:flex;gap:10px;flex-wrap:wrap;margin:3px 0 0 30px;font-size:11px}.sub label{width:110px}.sub label.w{flex:1;min-width:180px}.sub .ck{display:flex;align-items:center;gap:5px;width:auto;align-self:flex-end}.sub .ck input{width:auto}
 .lst{min-height:46px}.lst:not(:has(.it))::after{content:attr(data-h);display:block;padding:12px;font-style:italic;color:#8a6f4a;text-align:center;border:2px dashed var(--ln);margin-top:6px}
 .eq{background:#fbf6e6;border:1px solid var(--ln)}.eq:not(:has(.it))::after{border:0}
+
+.weight-panel{margin:10px 0 14px;padding:10px 12px;background:#fbf6e6;border:1px solid var(--ln);border-left:5px solid #8a7a5a}
+.weight-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.weight-head b{color:var(--red);font-variant:small-caps;font-size:16px}
+.weight-values{display:flex;gap:18px;flex-wrap:wrap;margin:5px 0;font-size:12px}
+.weight-values strong{font-size:15px}
+.weight-track{height:9px;background:#e2d4ac;border:1px solid var(--ln);border-radius:8px;overflow:hidden;margin:6px 0}
+.weight-fill{height:100%;width:0;background:#6b7c45;transition:width .2s}
+.weight-note{font-size:11px;color:#4a3b2a}
+.weight-panel.over{border-left-color:#8b1e1e}.weight-panel.over .weight-fill{background:#a52b20}
+.weight-panel.over .weight-status{color:#8b1e1e;font-weight:bold}
 .ph{height:4px;background:var(--red);margin:1px 0}.ghost{position:fixed;z-index:90;pointer-events:none;background:var(--red);color:var(--pg);padding:4px 12px;border-radius:14px;font-size:13px;box-shadow:0 4px 14px rgba(0,0,0,.4)}
 #sd{position:fixed;right:0;top:50%;transform:translateY(-50%);max-height:100vh;overflow-y:auto;z-index:40;display:flex;flex-direction:column;gap:6px;padding:8px 6px;background:var(--pg);border:2px solid var(--red);border-right:0;border-radius:10px 0 0 10px}
 #sd button{width:64px;padding:6px 2px;font-size:11px;line-height:1.2}#sd button span{display:block;font-size:22px}#sd button.on{background:var(--red);color:var(--pg)}
@@ -50,9 +62,10 @@ button{font:inherit;font-size:12px;border:1px solid var(--red);background:var(--
 <header class="top"><div class="f">
 <label>Nome<input data-i="nome"></label><label>Classe<input data-i="classe"></label></div>
 <div class="ca"><small>CA ATUAL</small><b id="ca">10</b><i id="cad"></i></div>
-<div class="f"><label>Subclasse<input data-i="sub"></label><label>Raça<input data-i="raca"></label><label>Mod. de Destreza<input type="number" data-i="des" value="0"></label></div>
+<div class="f"><label>Subclasse<input data-i="sub"></label><label>Raça<input data-i="raca"></label><label>Mod. de Destreza<input type="number" data-i="des" value="0"></label><label>Força<input type="number" min="1" max="30" data-i="forca"></label><label>Categoria de tamanho<select data-i="tamanho"><option>Miúdo</option><option>Pequeno</option><option selected>Médio</option><option>Grande</option><option>Enorme</option><option>Imenso</option></select></label></div>
 </header>
 <section><h2>Equipado</h2><div class="tbl"><div class="lst eq" data-l="eq" data-h="Arraste itens do inventário para cá (a primeira armadura define a CA)"></div></div></section>
+<section class="weight-panel" id="weightPanel"><div class="weight-head"><b>Peso carregado</b><span class="weight-status" id="weightStatus">Informe sua Força para calcular a capacidade.</span></div><div class="weight-values"><span>Carregado: <strong id="weightTotal">0 kg</strong></span><span>Capacidade máxima: <strong id="weightMax">—</strong></span><span>Disponível: <strong id="weightFree">—</strong></span></div><div class="weight-track"><div class="weight-fill" id="weightFill"></div></div><div class="weight-note" id="weightNote">O cálculo considera inventário e equipamento, multiplicados pelas respectivas quantidades.</div></section>
 <section><h2>Inventário <button id="nw">+ Novo item</button></h2><div class="tbl"><div class="lst" data-l="inv" data-h="Abra Armas, Armaduras ou Itens gerais no menu à direita e arraste itens para cá"></div></div></section>
 </main>
 <aside id="sd"><button data-c="w"><span>⚔️</span>Armas</button><button data-c="a"><span>🛡️</span>Armaduras</button><button data-c="g"><span>🎒</span>Itens gerais</button><button data-c="m"><span>🏹</span>Munições</button><button data-c="fa"><span>🔮</span>Focos arcanos</button><button data-c="fd"><span>🌿</span>Focos druídicos</button></aside>
@@ -202,7 +215,7 @@ CAT.w.forEach(c=>c.d=dw(c));CAT.a.forEach(c=>c.d=da(c));CAT.g.forEach(c=>{if(DG[
 CAT.m.forEach(c=>c.d=DM[c.n]||'');CAT.fa.forEach(c=>c.d=DF[c.n]+DFA);CAT.fd.forEach(c=>c.d=DF[c.n]+DFD);
 const KEY='ficha-inventario-v1',$=s=>document.querySelector(s),uid=()=>Math.random().toString(36).slice(2,9);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-let S={nome:'',classe:'',sub:'',raca:'',des:0,inv:[],eq:[]};
+let S={nome:'',classe:'',sub:'',raca:'',des:0,forca:10,tamanho:'Médio',inv:[],eq:[]};
 try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const find=id=>{for(const l of['inv','eq']){const i=S[l].findIndex(x=>x.id==id);if(i>=0)return{l,i,it:S[l][i]}}};
@@ -218,14 +231,35 @@ function chk(){const m=[];S.eq=S.eq.filter(i=>{if(need(i)){S.inv.push(i);m.push(
 function render(){chk();document.querySelectorAll('.lst').forEach(l=>l.innerHTML=S[l.dataset.l].map(row).join(''));calc()}
 function calc(){const d=+S.des||0,a=S.eq.find(i=>i.k=='a'&&!/^\+/.test(i.ca)),s=S.eq.find(i=>i.k=='a'&&/^\+/.test(i.ca));let base=10,dx=d,t='10 + Des';
  if(a){base=parseInt(a.ca)||10;const m=a.md===''||a.md==null?NaN:+a.md;if(!isNaN(m))dx=m===0?0:Math.min(d,m);t=a.n+' '+base+' + Des '+dx}else t='Sem armadura: 10 + Des '+d;
- const b=s?parseInt(s.ca)||0:0;if(s)t+=' + '+s.n+' '+b;$('#ca').textContent=base+dx+b;$('#cad').textContent=t}
-document.querySelectorAll('[data-i]').forEach(e=>{e.value=S[e.dataset.i]??'';e.oninput=()=>{S[e.dataset.i]=e.type=='number'?+e.value||0:e.value;calc();save()}});
+ const b=s?parseInt(s.ca)||0:0;if(s)t+=' + '+s.n+' '+b;$('#ca').textContent=base+dx+b;$('#cad').textContent=t;calcWeight()}
+function weightKg(raw){
+ const v=String(raw??'').trim().toLowerCase();
+ if(!v||v==='—'||v==='-'||v==='varia')return 0;
+ const m=v.match(/-?\d+(?:[.,]\d+)?/);if(!m)return 0;
+ const n=parseFloat(m[0].replace(',','.'));
+ if(/\bg\b|gramas?/.test(v))return n/1000;
+ return n;
+}
+function fmtKg(n){return n.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:2})+' kg'}
+function calcWeight(){
+ const total=[...S.inv,...S.eq].reduce((sum,i)=>sum+weightKg(i.p)*Math.max(0,+i.q||0),0);
+ const str=Math.max(0,+S.forca||0),sizes={'Miúdo':0.5,'Pequeno':1,'Médio':1,'Grande':2,'Enorme':4,'Imenso':8};
+ const mult=sizes[S.tamanho]||1,max=str>0?str*15*0.45359237*mult:0;
+ const panel=$('#weightPanel'),fill=$('#weightFill'),status=$('#weightStatus');
+ $('#weightTotal').textContent=fmtKg(total);$('#weightMax').textContent=max?fmtKg(max):'—';$('#weightFree').textContent=max?fmtKg(max-total):'—';
+ fill.style.width=Math.min(100,max?total/max*100:0)+'%';panel.classList.toggle('over',!!max&&total>max);
+ if(!str){status.textContent='Informe sua Força para calcular a capacidade.';$('#weightNote').textContent='O peso carregado soma inventário e equipamento. Pesos em gramas e quilogramas são convertidos automaticamente.'}
+ else if(total>max){status.textContent='Capacidade excedida';$('#weightNote').textContent='Você está carregando '+fmtKg(total-max)+' acima da sua capacidade de carga.'}
+ else{status.textContent='Dentro da capacidade';$('#weightNote').textContent='Força '+str+' · '+S.tamanho+' · multiplicador de tamanho ×'+mult+'. O cálculo soma inventário e equipamento.'}
+}
+
+document.querySelectorAll('[data-i]').forEach(e=>{e.value=S[e.dataset.i]??e.value;e.oninput=()=>{S[e.dataset.i]=e.type=='number'?+e.value||0:e.value;calc();save()};e.onchange=()=>{S[e.dataset.i]=e.type=='number'?+e.value||0:e.value;calc();save()}});
 document.addEventListener('input',e=>{const f=e.target.dataset.f,r=e.target.closest('.it');if(!f||!r)return;const o=find(r.dataset.id);if(!o)return;
  o.it[f]=e.target.type=='checkbox'?e.target.checked:f=='q'?Math.max(0,+e.target.value||0):e.target.value;if(f=='q')r.classList.toggle('z',o.it.q==0);if(f=='d')r.querySelector('.dc').textContent=e.target.value;calc();save()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const r=b.closest('.it'),o=find(r.dataset.id),a=b.dataset.a;
  if(a=='t'){o.it.o=!o.it.o;r.classList.toggle('o',!!o.it.o);save();return}
  if(a=='x'){if(!b.dataset.t){b.dataset.t=1;b.textContent='?';setTimeout(()=>{delete b.dataset.t;b.textContent='✕'},2500);return}S[o.l].splice(o.i,1);render();save();return}
- o.it.q=Math.max(0,o.it.q+(a=='+'?1:-1));const q=r.querySelector('.q');q.value=o.it.q;r.classList.toggle('z',o.it.q==0);save()});
+ o.it.q=Math.max(0,o.it.q+(a=='+'?1:-1));const q=r.querySelector('.q');q.value=o.it.q;r.classList.toggle('z',o.it.q==0);calc();save()});
 $('#nw').onclick=()=>{S.inv.push({id:uid(),k:'g',key:'',n:'',d:'',p:'',v:'',q:1,o:true});render();save()};
 /* painel de catalogo */
 let cc=null,cl=[],selc=new Set();
